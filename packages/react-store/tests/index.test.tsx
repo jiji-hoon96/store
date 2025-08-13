@@ -157,6 +157,29 @@ describe('shallow', () => {
     expect(shallow(objA, objB)).toBe(true)
   })
 
+  test('should handle empty objects', () => {
+    expect(shallow({}, {})).toBe(true)
+  })
+
+  test('should handle getter-only objects', () => {
+    function createGetterOnlyObject(value: number) {
+      const obj = Object.create({})
+      Object.defineProperty(obj, 'value', {
+        get: () => value,
+        enumerable: false,
+        configurable: true
+      })
+      return obj
+    }
+
+    const objA = createGetterOnlyObject(42)
+    const objB = createGetterOnlyObject(42)
+    const objC = createGetterOnlyObject(24)
+    
+    expect(shallow(objA, objB)).toBe(true)
+    expect(shallow(objA, objC)).toBe(false)
+  })
+
   test('should return false for objects with different types', () => {
     const objA = { a: 1, b: 'hello' }
     const objB = { a: '1', b: 'hello' }
